@@ -4,4 +4,29 @@
 
 {% block content %}
 
+    <h1>COVID-19 SSEFinder</h1>
+
+    <table>
+        <!--Table Header-->
+        <tr>
+            <th>Case Number</th>
+            <th>Name</th>
+            <th>ID Number</th>
+            <th>Date of Birth</th>
+            <th>Onset Date</th>
+            <th>Confirmed Date</th>
+        </tr>
+        <!--Table Entries-->
+        {% for case in cases %}
+        <tr>
+            <td>{{ case.case_number }}</td>
+            <td>{{ case.person_name }}</td>
+            <td>{{ case.identity_document_number }}</td>
+            <td>{{ case.date_of_birth }}</td>
+            <td>{{ case.onset_date }}</td>
+            <td>{{ case.date_confirmed }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
 {% endblock %}
