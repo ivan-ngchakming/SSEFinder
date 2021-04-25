@@ -1,1 +1,1 @@
-web: gunicorn covid19dashboard.wsgi --log-file -
+web: gunicorn SSEFinder.wsgi --log-file -
