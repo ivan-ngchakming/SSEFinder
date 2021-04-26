@@ -1,8 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 import requests
+from django.http import HttpResponse
+from django.shortcuts import render
+
 from .models import Event, Case
-from .forms import EventForm
 
 
 def index(request):
@@ -41,14 +41,14 @@ def events(request):
 
 
 def case(request, id):
-    #test id
+    # test id
     # id = 1234
     case = Case.objects.get(pk=id)
 
-    #Retrieve all events with matching id
-    event_location_only = Event.objects.filter(case_number_name = id).values('venue_location')
+    # Retrieve all events with matching id
+    event_location_only = Event.objects.filter(case_number_name=id).values('venue_location')
 
-    #Connect to API and update x coord, y coord and address
+    # Connect to API and update x coord, y coord and address
     for i in event_location_only:
         venue_loc = i['venue_location']
         query = {
@@ -58,16 +58,16 @@ def case(request, id):
         x_val = response[0]['x']
         y_val = response[0]['y']
         address_val = response[0]['addressEN']
-        Event.objects.filter(venue_location = venue_loc).update(address=address_val)
-        Event.objects.filter(venue_location = venue_loc).update(x_coord=x_val)
-        Event.objects.filter(venue_location = venue_loc).update(y_coord=y_val)
+        Event.objects.filter(venue_location=venue_loc).update(address=address_val)
+        Event.objects.filter(venue_location=venue_loc).update(x_coord=x_val)
+        Event.objects.filter(venue_location=venue_loc).update(y_coord=y_val)
 
-    events =  Event.objects.filter(case_number_name = id)
+    events = Event.objects.filter(case_number_name=id)
     context = {
         'case': case,
         'events': events
     }
-    return render (request, 'case_expand.html', context)
+    return render(request, 'case_expand.html', context)
 
 
 def event(request, id):
