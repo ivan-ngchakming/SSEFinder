@@ -4,8 +4,8 @@
 
 {% block content %}
 
-    <h1>COVID-19 SSEFinder</h1>    
-    <button class="tab_button" onclick="openTab('Cases')">Cases</button>
+    <h1>COVID-19 SSEFinder</h1>
+    <button class="tab_button" onclick="window.location.href='/'">Cases</button>
     <button class="tab_button" onclick="openTab('SSE_Loc')">SSE Locations</button>
    
     <div id="Cases" class="tab">
@@ -43,14 +43,14 @@
         </tr>
         {% for event in events %} 
         <tr>
-            <td>{{ event.venue_name }}</td>
-            <td>{{ event.venue_location }}</td>
-            <td>{{ event.address }}</td>
-            <td>{{ event.x_coord }}</td>
-            <td>{{ event.y_coord }}</td>
-            <td>{{ event.date_of_event }}</td>
-            <td>{{ event.description }}</td>
-            <td>{{ event.classification }}</td>
+            <td>{{ event.0.venue_name }}</td>
+            <td>{{ event.0.venue_location }}</td>
+            <td>{{ event.0.address }}</td>
+            <td>{{ event.0.x_coord }}</td>
+            <td>{{ event.0.y_coord }}</td>
+            <td>{{ event.0.date_of_event }}</td>
+            <td>{{ event.0.description }}</td>
+            <td>{{ event.1 }}</td>
         </tr>
         {% endfor %} 
     </table>

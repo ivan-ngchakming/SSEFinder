@@ -22,7 +22,7 @@
         </tr>
         <!--Table Entries-->
         {% for case in cases %}
-        <tr>
+        <tr onclick="window.location.href='cases/{{ case.case_number }}'">
             <td>{{ case.case_number }}</td>
             <td>{{ case.person_name }}</td>
             <td>{{ case.identity_document_number }}</td>
@@ -49,5 +49,8 @@
       </tr>
     </table>
     </div>
+
+<!--Can remove before submission-->
+<p>Hint: Click on any case to view details</p>
 
 {% endblock %}
