@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import requests
+from .models import Event, Case
+from .forms import EventForm
 
 
 def index(request):
