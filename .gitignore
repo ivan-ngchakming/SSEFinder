@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-SSEFinder/.env
+.env
 .venv
 env/
 venv/
@@ -130,3 +130,5 @@ dmypy.json
 
 # PyCharm
 .idea
+
+test_data.txt
