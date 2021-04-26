@@ -34,7 +34,7 @@ SECRET_KEY = 'o%yqftu#8x6a@cd9el*l9$-$myr6wm#sx7vr(y+t(347c#=k4d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['peaceful-ocean-56615.herokuapp.com/', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ssefinder-comp3297.herokuapp.com/', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'SSEFinder.urls'

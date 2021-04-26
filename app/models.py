@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class Case(models.Model):
     case_number = models.IntegerField(primary_key=True)
     person_name = models.CharField(max_length=30)
@@ -28,6 +28,6 @@ class Event(models.Model):
     date_of_event = models.DateField()
     description = models.CharField(max_length = 200)
     classification = models.CharField(max_length=10, choices = classification_choices, default='Infected')
-    
+
     def __str__(self):
         return self.venue_name
