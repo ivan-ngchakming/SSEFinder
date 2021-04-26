@@ -19,7 +19,33 @@ def events(request):
 
 
 def case(request, id):
-    return HttpResponse(f"Case {id}")
+    #test id
+    # id = 1234
+    case = Case.objects.get(pk=id)
+
+    #Retrieve all events with matching id
+    event_location_only = Event.objects.filter(case_number_name = id).values('venue_location')
+    
+    #Connect to API and update x coord, y coord and address
+    for i in event_location_only:
+        venue_loc = i['venue_location']
+        query = {
+            "q": venue_loc
+        }
+        response = requests.get("https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=", params=query).json()
+        x_val = response[0]['x']
+        y_val = response[0]['y']
+        address_val = response[0]['addressEN']
+        Event.objects.filter(venue_location = venue_loc).update(address=address_val)
+        Event.objects.filter(venue_location = venue_loc).update(x_coord=x_val)
+        Event.objects.filter(venue_location = venue_loc).update(y_coord=y_val)
+    
+    events =  Event.objects.filter(case_number_name = id)
+    context = {
+        'case': case,
+        'events': events
+    }
+    return render (request, 'case_expand.html', context)
 
 
 def event(request, id):
