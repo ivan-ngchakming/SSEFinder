@@ -10,47 +10,29 @@
     <button class="tab_button" onclick="openTab('SSE_Loc')">SSE Locations</button>
 
     <div id="Cases" class="tab">
-    <table id="cases">
-        <!--Table Header-->
-        <tr id="table_header">
-            <th>Case Number</th>
-            <th>Name</th>
-            <th>ID Number</th>
-            <th>Date of Birth</th>
-            <th>Onset Date</th>
-            <th>Confirmed Date</th>
-        </tr>
-        <!--Table Entries-->
-        {% for case in cases %}
-        <tr onclick="window.location.href='cases/{{ case.case_number }}'">
-            <td>{{ case.case_number }}</td>
-            <td>{{ case.person_name }}</td>
-            <td>{{ case.identity_document_number }}</td>
-            <td>{{ case.date_of_birth }}</td>
-            <td>{{ case.onset_date }}</td>
-            <td>{{ case.date_confirmed }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+        {% include 'cases.html' %}
     </div>
 
     <div id="SSE_Loc" class="tab" style="display:none">
-    <table>
-      <!--Table Header-->
-      <tr id="table_header">
-          <th>Venue Name</th>
-          <th>Venue Location</th>
-          <th>Address</th>
-          <th>X Coord</th>
-          <th>Y Coord</th>
-          <th>Date of Event</th>
-          <th>Description</th>
-          <th>Cases Involved</th>
-      </tr>
-    </table>
-    </div>
+        <table>
+        <!--Table Header-->
+        <tr id="table_header">
+            <th>Venue Name</th>
+            <th>Venue Location</th>
+            <th>Address</th>
+            <th>X Coord</th>
+            <th>Y Coord</th>
+            <th>Date of Event</th>
+            <th>Description</th>
+        </tr>
 
-<!--Can remove before submission-->
-<p>Hint: Click on any case to view details</p>
+        <tr>
+            <td colspan=7>
+                Loading...
+            </td>
+        </tr>
+
+        </table>
+    </div>
 
 {% endblock %}

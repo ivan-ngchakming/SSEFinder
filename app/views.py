@@ -1,5 +1,5 @@
 import requests
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from .models import Event, Case, Classification
@@ -28,19 +28,7 @@ def index(request):
     return render(request, "index.html", context)
 
 
-def login(request):
-    return HttpResponse("Login")
-
-
-def cases(request):
-    return HttpResponse("Cases")
-
-
-def events(request):
-    return HttpResponse("Superspreading Events")
-
-
-def case(request, id):
+def query_case_detail(request):
     # Create Dummy Event data
     # locations = [
     #     ("Kam Lok Hin Chicken and Fish Pot", "Conwell Mansion"),
@@ -78,9 +66,14 @@ def case(request, id):
     #                 event=event
     #             )
     #             new_class.save()
+    # for event in events:
+    #     event.update_geodata()
+    #     event.save()
     # Dummy data entry end
 
-    case = Case.objects.get(pk=id)
+    case_number = request.GET.get('case_number', None)
+
+    case = Case.objects.get(pk=case_number)
     all_classifications = case.classification_set.all()
     events = [classification.event for classification in all_classifications]
     classifications = [event.get_classification_str(case.case_number) for event in events]
@@ -91,7 +84,24 @@ def case(request, id):
         'events': events,
     }
 
-    return render(request, 'case_expand.html', context)
+    return render(request, "case_detail.html", context)
+
+
+def login(request):
+    return HttpResponse("Login")
+
+
+def cases(request):
+    return HttpResponse("Cases")
+
+
+def events(request):
+    print("Rendering events")
+    events = Event.objects.all()
+    context = {
+        'events': events,
+    }
+    return render(request, "events.html", context)
 
 
 def event(request, id):
