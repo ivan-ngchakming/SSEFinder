@@ -1,0 +1,21 @@
+<tr id="table_header">
+    <th>Case Number</th>
+    <th>Name</th>
+    <th>ID Number</th>
+    <th>Date of Birth</th>
+    <th>Onset Date</th>
+    <th>Confirmed Date</th>
+    <th>Classification</th>
+</tr>
+
+{% for case in cases %}
+<tr>
+    <td>{{ case.0.case_number }}</td>
+    <td>{{ case.0.person_name }}</td>
+    <td>{{ case.0.identity_document_number }}</td>
+    <td>{{ case.0.date_of_birth }}</td>
+    <td>{{ case.0.onset_date }}</td>
+    <td>{{ case.0.date_confirmed }}</td>
+    <td>{{ case.1 }}</td>
+</tr>
+{% endfor %}

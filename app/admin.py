@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Event, Case
+from .models import Event, Case, Classification
 
 # Register your models here.
 admin.site.register(Event)
 admin.site.register(Case)
+admin.site.register(Classification)

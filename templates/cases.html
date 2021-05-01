@@ -1,0 +1,30 @@
+<table id="cases">
+    <!--Table Header-->
+    <tr id="table_header">
+        <th>Case Number</th>
+        <th>Name</th>
+        <th>ID Number</th>
+        <th>Date of Birth</th>
+        <th>Onset Date</th>
+        <th>Confirmed Date</th>
+    </tr>
+    <!--Table Entries-->
+    {% for case in cases %}
+    <tr onclick="showCaseDetail('{{ case.case_number }}');">
+        <td>{{ case.case_number }}</td>
+        <td>{{ case.person_name }}</td>
+        <td>{{ case.identity_document_number }}</td>
+        <td>{{ case.date_of_birth }}</td>
+        <td>{{ case.onset_date }}</td>
+        <td>{{ case.date_confirmed }}</td>
+    </tr>
+
+    <tr id="case_detail_{{ case.case_number}}" style="display:none">
+        <td colspan=6>
+            <h3>Attendance Record</h3>
+            <table></table>
+        </td>
+    </tr>
+
+    {% endfor %}
+</table>

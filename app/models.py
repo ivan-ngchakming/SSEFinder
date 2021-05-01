@@ -22,6 +22,18 @@ class Event(models.Model):
     y_coord = models.FloatField(null=True, blank=True)  # Auto updated via api
     date_of_event = models.DateField()
     description = models.CharField(max_length=200)
+    sse = models.BooleanField(default=False)
+
+    def identify_sse(self):
+        """Update sse status of event"""
+        SSE_THRESHOLD = 6
+        classifications = self.classification_set.all()
+        if len(classifications) > SSE_THRESHOLD and not self.sse:
+            self.sse = True
+            self.save()
+        elif len(classifications) <= SSE_THRESHOLD and self.sse:
+            self.sse = False
+            self.save()
 
     def update_geodata(self):
         """Connect to API and update x coord, y coord and address"""
@@ -39,13 +51,7 @@ class Event(models.Model):
         self.address = response[0]['addressEN']
 
     def get_classification(self, case_number):
-        classifications = self.classification_set.all()
-        classification = [c for c in classifications if c.case.case_number == case_number]
-
-        if len(classification) > 1:
-            raise IndexError("Something has gone wrong")
-        else:
-            classification = classification[0]
+        classification = self.classification_set.get(case_id=case_number)
 
         result = []
         if classification.infector:
@@ -69,4 +75,4 @@ class Classification(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.case
+        return f"{self.case} - {self.event}"
