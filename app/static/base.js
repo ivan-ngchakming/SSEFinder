@@ -13,7 +13,10 @@ function openTab(tabname) {
       dataType: 'html',
       success: function (data) {
         document.getElementById(tabname).innerHTML = data;
-      }
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        document.getElementById(tabname).innerHTML = "Error";
+      },
     });
   }
 };
@@ -34,18 +37,55 @@ function showCaseDetail(case_number) {
     }
 
     $.ajax({
-        url: 'ajax',
+        url: 'ajax/case_detail',
         data: {
           'case_number': case_number,
         },
         dataType: 'html',
         success: function (data) {
           td.getElementsByTagName('Table')[0].innerHTML = data;
-        }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          document.getElementById(tabname).innerHTML = "Error";
+        },
       });
 
   } else {
     td.style.display = "none";
   }
 
+};
+
+
+function showEventDetail(event_name) {
+  var td = document.getElementById("event_detail_"+event_name);
+  if (td.style.display == "none") {
+    var all_case_detail = document.querySelectorAll('[id^="event_detail_"]')
+    for (i = 0; i < all_case_detail.length; i++) {
+      if (all_case_detail[i].id != td.id) {
+        all_case_detail[i].style.display = "none";
+      } else {
+        // Turn case deatil for selected case visible
+        td.style.display = "table-row";
+        td.getElementsByTagName('Table')[0].innerHTML = "Loading..."
+      }
+    }
+
+    $.ajax({
+        url: 'ajax/event_detail',
+        data: {
+          'event_name': event_name,
+        },
+        dataType: 'html',
+        success: function (data) {
+          td.getElementsByTagName('Table')[0].innerHTML = data;
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          document.getElementById(tabname).innerHTML = "Error";
+        },
+      });
+
+  } else {
+    td.style.display = "none";
+  }
 };

@@ -11,7 +11,7 @@
     </tr>
     <!--Table Entries-->
     {% for event in events %}
-    <tr onclick="">
+    <tr onclick="showEventDetail('{{ event.venue_name }}')">
         <td>{{ event.venue_name }}</td>
         <td>{{ event.venue_location }}</td>
         <td>{{ event.address }}</td>

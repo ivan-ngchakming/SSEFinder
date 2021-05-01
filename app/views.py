@@ -28,7 +28,7 @@ def index(request):
     return render(request, "index.html", context)
 
 
-def query_case_detail(request):
+def case_detail(request):
     # Create Dummy Event data
     # locations = [
     #     ("Kam Lok Hin Chicken and Fish Pot", "Conwell Mansion"),
@@ -91,18 +91,30 @@ def login(request):
     return HttpResponse("Login")
 
 
-def cases(request):
-    return HttpResponse("Cases")
-
-
 def events(request):
-    print("Rendering events")
     events = Event.objects.all()
+
+    # Update SSE status for all events
+    for event in events:
+        event.identify_sse()
+
     context = {
-        'events': events,
+        'events': [e for e in events if e.sse],
     }
     return render(request, "events.html", context)
 
 
-def event(request, id):
-    return HttpResponse(f"Event {id}")
+def event_detail(request):
+    event_name = request.GET.get('event_name', None)
+
+    event = Event.objects.get(venue_name=event_name)
+    all_classifications = event.classification_set.all()
+    cases = [classification.case for classification in all_classifications]
+    classifications = [event.get_classification_str(case.case_number) for case in cases]
+    cases = list(zip(cases, classifications))
+
+    context = {
+        'cases': cases,
+    }
+
+    return render(request, "event_detail.html", context)

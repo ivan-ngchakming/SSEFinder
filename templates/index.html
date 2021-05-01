@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}SSEFinder{% endblock %}
 
 {% block content %}
 
+    <img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
     <h1>COVID-19 SSEFinder</h1>
 
     <button class="tab_button" onclick="openTab('Cases')">Cases</button>
