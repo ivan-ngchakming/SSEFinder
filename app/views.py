@@ -1,23 +1,23 @@
 import requests
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
+from django.views.generic import TemplateView, ListView
+from .forms import CreateEventForm
 from .models import Event, Case, Classification
-
 
 def index(request):
     # Create dummy data
-    # from faker import Faker
-    # fake = Faker()
-    # for i in range(10):
-    #     new_case = Case()
-    #     new_case.case_number = i
-    #     new_case.person_name = fake.name()
-    #     new_case.identity_document_number = fake.isbn10()
-    #     new_case.date_of_birth = fake.date_object()
-    #     new_case.onset_date = fake.date_object()
-    #     new_case.date_confirmed = fake.date_object()
-    #     new_case.save()
+    from faker import Faker
+    fake = Faker()
+    for i in range(10):
+        new_case = Case()
+        new_case.case_number = i
+        new_case.person_name = fake.name()
+        new_case.identity_document_number = fake.isbn10()
+        new_case.date_of_birth = fake.date_object()
+        new_case.onset_date = fake.date_object()
+        new_case.date_confirmed = fake.date_object()
+        new_case.save()
 
     cases = Case.objects.all()
 
@@ -30,45 +30,45 @@ def index(request):
 
 def case_detail(request):
     # Create Dummy Event data
-    # locations = [
-    #     ("Kam Lok Hin Chicken and Fish Pot", "Conwell Mansion"),
-    #     ("Dynasty II", "The Dynasty Club"),
-    #     ("Hong Kong Cultural Centre Administration Building", "Hong Kong Cultural Centre Administration Building"),
-    #     ("The Flying Frenchman", "The Flying Frenchman"),
-    # ]
-    # from faker import Faker
-    # fake = Faker()
-    # for location in locations:
-    #     new_event = Event()
-    #     new_event.venue_name = location[0]
-    #     new_event.venue_location = location[1]
-    #     new_event.date_of_event = fake.date_object()
-    #     new_event.description = fake.text(200)
-    #     new_event.save()
-    #
-    # cases = Case.objects.all()
-    # events = Event.objects.all()
-    # for i, case in enumerate(cases):
-    #     for j, event in enumerate(events):
-    #         if i == j:
-    #             new_class = Classification(
-    #                 infected=True,
-    #                 infector=True,
-    #                 case=case,
-    #                 event=event
-    #             )
-    #             new_class.save()
-    #         if i > j:
-    #             new_class = Classification(
-    #                 infected=True,
-    #                 infector=False,
-    #                 case=case,
-    #                 event=event
-    #             )
-    #             new_class.save()
-    # for event in events:
-    #     event.update_geodata()
-    #     event.save()
+    locations = [
+        ("Kam Lok Hin Chicken and Fish Pot", "Conwell Mansion"),
+        ("Dynasty II", "The Dynasty Club"),
+        ("Hong Kong Cultural Centre Administration Building", "Hong Kong Cultural Centre Administration Building"),
+        ("The Flying Frenchman", "The Flying Frenchman"),
+    ]
+    from faker import Faker
+    fake = Faker()
+    for location in locations:
+        new_event = Event()
+        new_event.venue_name = location[0]
+        new_event.venue_location = location[1]
+        new_event.date_of_event = fake.date_object()
+        new_event.description = fake.text(200)
+        new_event.save()
+
+    cases = Case.objects.all()
+    events = Event.objects.all()
+    for i, case in enumerate(cases):
+        for j, event in enumerate(events):
+            if i == j:
+                new_class = Classification(
+                    infected=True,
+                    infector=True,
+                    case=case,
+                    event=event
+                )
+                new_class.save()
+            if i > j:
+                new_class = Classification(
+                    infected=True,
+                    infector=False,
+                    case=case,
+                    event=event
+                )
+                new_class.save()
+    for event in events:
+        event.update_geodata()
+        event.save()
     # Dummy data entry end
 
     case_number = request.GET.get('case_number', None)
@@ -79,13 +79,18 @@ def case_detail(request):
     classifications = [event.get_classification_str(case.case_number) for event in events]
     events = list(zip(events, classifications))
 
+    # Form views
+    form = CreateEventForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+
     context = {
         'case': case,
         'events': events,
+        'form': form
     }
 
     return render(request, "case_detail.html", context)
-
 
 def login(request):
     return HttpResponse("Login")
