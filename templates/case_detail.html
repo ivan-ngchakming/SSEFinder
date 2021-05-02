@@ -23,4 +23,30 @@
 </tr>
 {% endfor %}
 
-<button>Add Event</button>
+<!-- ADD ATTENDANCE RECORDS HERE -->
+<tr>
+<form method='POST'>
+{% csrf_token %}
+
+<td><label for="{{ form.venue_name.id_for_label }}"></label>
+{{ form.venue_name }} </td>
+
+<td><label for="{{ form.venue_location.id_for_label }}"></label>
+{{ form.venue_location }}</td>
+
+<td> NULL </td>
+
+<td> NULL </td>
+
+<td> NULL </td>
+
+<td><label for="{{ form.date_of_event.id_for_label }}"></label>
+{{ form.date_of_event }}</td>
+
+<td><label for="{{ form.description.id_for_label }}"></label>
+{{ form.description }}</td>
+
+<td> NULL </td>
+<input type='submit' value='Add New Location' />
+</form>
+<tr>
