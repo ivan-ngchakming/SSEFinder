@@ -91,18 +91,6 @@ def login(request):
     return HttpResponse("Login")
 
 
-def events(request):
-    events = Event.objects.all()
-
-    # Update SSE status for all events
-    for event in events:
-        event.identify_sse()
-
-    context = {
-        'events': [e for e in events if e.sse],
-    }
-    return render(request, "events.html", context)
-
 
 def event_detail(request):
     event_name = request.GET.get('event_name', None)
@@ -118,3 +106,25 @@ def event_detail(request):
     }
 
     return render(request, "event_detail.html", context)
+
+def events(request):
+    if request.method =="POST":
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        events = Event.objects.filter(date__range=[start_date,end_date])
+        for event in events:
+            event.identify_sse()
+
+        context = {
+            "events": [e for e in events if e.sse],
+        }
+        return render(request, "events.html", context)
+    else:
+        events = Event.objects.all()
+        for event in events:
+            event.identify_sse()
+
+        context = {
+            "events": [e for e in events if e.sse],
+        }
+        return render(request, "events.html", context)
