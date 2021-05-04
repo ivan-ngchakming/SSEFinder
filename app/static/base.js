@@ -44,7 +44,6 @@ function showCaseDetail(case_number) {
         dataType: 'html',
         success: function (data) {
           td.getElementsByTagName('Table')[0].innerHTML = data;
-          addrecord();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           document.getElementById(tabname).innerHTML = "Error";
@@ -91,63 +90,70 @@ function showEventDetail(event_name) {
   }
 };
 
-function addrecord() {
+function showRecordForm(case_number) {
+  var tr = document.getElementById("case_detail_"+case_number);
   $.ajax({
-      url: 'ajax/showrecordform',
-      data: {
-
-      },
-      dataType: 'html',
-      success: function (data) {
-        document.getElementById('RecordBox').innerHTML = data;
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        document.getElementById('RecordBox').innerHTML = "Error";
-      },
-    });
+    url: 'ajax/showrecordform',
+    data: {},
+    dataType: 'html',
+    success: function (data) {
+      tr.getElementsByClassName('RecordBox')[0].innerHTML = data;
+      document.getElementById('show-add-event-form-'+case_number).style.display = "none";
+      document.getElementById('submit-add-event-form-'+case_number).style.display = "block";
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      tr.getElementsByClassName('RecordBox')[0].innerHTML = "Error";
+    },
+  });
 };
+
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 1 second in this case
 
 function searchcoord() {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(request_coordinate, doneTypingInterval);
+}
+
+function request_coordinate() {
   var venue_location = document.getElementById("venue_location").value;
-    // GET and show coordinates
-    let endpoint = 'https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=';
-    $.ajax({
-        url: endpoint + venue_location,
-        type: "GET",
-        dataType: 'json',
-        success: function(result){
-           console.log(result);
-           document.getElementById("x_coord_field").innerHTML = result[0]['x'];
-           document.getElementById("y_coord_field").innerHTML = result[0]['y'];
-           document.getElementById("address_field").innerHTML = result[0]['addressEN'];
-        }
-     })
-
-
+  // GET and show coordinates
+  let endpoint = 'https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=';
+  $.ajax({
+      url: endpoint + venue_location,
+      type: "GET",
+      dataType: 'json',
+      success: function(result){
+         console.log(result);
+         document.getElementById("x_coord_field").innerHTML = result[0]['x'];
+         document.getElementById("y_coord_field").innerHTML = result[0]['y'];
+         document.getElementById("address_field").innerHTML = result[0]['addressEN'];
+      }
+   })
 };
 
-function submitrecord(case_classification) {
-  console.log(case_classification);
+function submitrecord(case_number) {
   $.ajax({
        type : "POST",
        url: 'ajax/showrecordform',
        data: {
-        venue_name : $('#venue_name').val(),
-        venue_location : $('#venue_location').val(),
-        address : document.getElementById("address_field").innerHTML,
-        x_coord : document.getElementById("x_coord_field").innerHTML,
-        y_coord : document.getElementById("y_coord_field").innerHTML,
-        date_of_event : $('#date_of_event').val(),
-        description : $('#description').val(),
-        event: $('#venue_name').val(),
+        'venue_name' : $('#venue_name').val(),
+        'venue_location' : $('#venue_location').val(),
+        'address' : document.getElementById("address_field").innerHTML,
+        'x_coord' : document.getElementById("x_coord_field").innerHTML,
+        'y_coord' : document.getElementById("y_coord_field").innerHTML,
+        'date_of_event' : $('#date_of_event').val(),
+        'description' : $('#description').val(),
+        'event': $('#venue_name').val(),
         // case: case_classification,
-        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        action: 'post',
-
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        'case_number': case_number,
        },
 
        success: function(){
          document.getElementById('output').innerHTML = "Succesfully added record!"; /* response message */
+         showCaseDetail(case_number);
+         showCaseDetail(case_number);
        },
 
        failure: function() {

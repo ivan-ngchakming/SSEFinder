@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'SSEFinder.wsgi.application'
 
 
 # Database
-https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 # Comment out the line below and fill in line 88-97 to use local postgres database
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}

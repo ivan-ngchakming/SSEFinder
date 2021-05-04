@@ -25,15 +25,11 @@
             <table></table>
             <!-- <p> {{ case }} </p> -->
             <br>
-            <button type='submit' class="submit_button" onclick="submitrecord('{{ case }}');"
-            style="float:right;background-color: white; color: black; border: 2px solid #203c7c; padding: 8px 12px;">Add Record</button>
+            <button id="show-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="showRecordForm('{{ case.case_number }}');">Add Record</button>
+            <button id="submit-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="submitrecord('{{ case.case_number }}');" style="display:none">Add Record</button>
             <b><p id="output" style="font-size: 15px;"></p></b>
         </td>
     </tr>
-
-
-
-
 
     {% endfor %}
 </table>

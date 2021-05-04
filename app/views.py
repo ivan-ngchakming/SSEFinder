@@ -3,21 +3,22 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
 from .models import Event, Case, Classification
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # TRIAL FORM SUBMISSION
 def create_post(request):
-    events = Event.objects.all()
-    # classification = Classification.objects.all()
     response_data = {}
-
-    if request.POST.get('action') == 'post':
-        venue_name = request.POST.get('venue_name', None) # getting data from venue_name input
-        venue_location = request.POST.get('venue_location', None) # getting data from venue_location input
+    if request.method == 'POST':
+        print("Processing post request")
+        venue_name = request.POST.get('venue_name', None)  # getting data from venue_name input
+        venue_location = request.POST.get('venue_location', None)  # getting data from venue_location input
         address = request.POST.get('address', None)  # getting data from address input
         x_coord = request.POST.get('x_coord', None)  # getting data from x_coord input
         y_coord = request.POST.get('y_coord', None)  # getting data from y_coord input
-        date_of_event = request.POST.get('date_of_event', None) # getting data from date_of_event input
-        description = request.POST.get('description', None) # getting data from description input
+        date_of_event = request.POST.get('date_of_event', None)  # getting data from date_of_event input
+        description = request.POST.get('description', None)  # getting data from description input
+        case_number = request.POST.get('case_number', None)
 
         response_data['venue_name'] = venue_name
         response_data['venue_location'] = venue_location
@@ -32,21 +33,33 @@ def create_post(request):
         # response_data['case'] = case
         # end of response data for Classification
 
-        Event.objects.create(
-            venue_name = venue_name,
-            venue_location = venue_location,
-            address = address,
-            x_coord = x_coord,
-            y_coord = y_coord,
-            date_of_event = date_of_event,
-            description = description,
+        try:
+            event = Event.objects.get(venue_location=venue_location)
+        except ObjectDoesNotExist:
+            event = Event.objects.create(
+                venue_name=venue_name,
+                venue_location=venue_location,
+                address=address,
+                x_coord=x_coord,
+                y_coord=y_coord,
+                date_of_event=date_of_event,
+                description=description,
             )
-        # Classification.objects.create(
-        #     case = case,
-        # )
+            event.save()
+        classification = Classification.objects.create(
+            case=Case.objects.get(case_number=case_number),
+            event=event,
+            infected=True,
+            infector=False,
+        )
+        classification.save()
+
         return JsonResponse(response_data)
 
-    return render(request, 'showrecordform.html', {'events':events})
+    else:
+        return render(request, 'showrecordform.html', {'events': events})
+
+
 # END OF TRIAL FORM SUBMISSION
 
 def index(request):
@@ -130,6 +143,7 @@ def case_detail(request):
     }
 
     return render(request, "case_detail.html", context)
+
 
 def login(request):
     return HttpResponse("Login")
