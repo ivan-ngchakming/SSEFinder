@@ -1,10 +1,10 @@
 import requests
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
+from django.contrib.auth.decorators import login_required
 from .models import Event, Case, Classification
 
-
+@login_required
 def index(request):
     # Create dummy data
     # from faker import Faker
@@ -27,7 +27,7 @@ def index(request):
 
     return render(request, "index.html", context)
 
-
+@login_required
 def case_detail(request):
     # Create Dummy Event data
     # locations = [
@@ -86,11 +86,11 @@ def case_detail(request):
 
     return render(request, "case_detail.html", context)
 
+# @login_required
+# def login(request):
+#     return HttpResponse("Login")
 
-def login(request):
-    return HttpResponse("Login")
-
-
+@login_required
 def events(request):
     events = Event.objects.all()
 
@@ -103,7 +103,7 @@ def events(request):
     }
     return render(request, "events.html", context)
 
-
+@login_required
 def event_detail(request):
     event_name = request.GET.get('event_name', None)
 
