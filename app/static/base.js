@@ -133,13 +133,16 @@ function request_coordinate() {
 };
 
 // Check range for date
-function check_form() {
-    var input_date = $('#date_of_event').val()
-    var onset_date = document.getElementById("onset_date").innerHTML
-    var confirmed_date = document.getElementById("date_confirmed").innerHTML
+function check_form(case_number, onset_date, date_confirmed) {
+    var invalid = false;
 
-    var date = new Date(onset_date);
-    var startperiod = new Date(date);
+    var input_date = $('#date_of_event').val()
+    var onset_date = onset_date
+    var confirmed_date = date_confirmed
+
+    // parsing onset_date
+    var start_date = new Date(onset_date);
+    var startperiod = new Date(start_date);
 
     startperiod.setDate(startperiod.getDate() - 14);
 
@@ -149,20 +152,44 @@ function check_form() {
 
     var startrange = y + '-' + mm + '-' + dd;
 
+    // parsing confirmed_date
+    var end_date = new Date(confirmed_date);
+    var endperiod = new Date(end_date);
+
+    endperiod.setDate(endperiod.getDate());
+
+    var dd1 = endperiod.getDate();
+    var mm2 = endperiod.getMonth() + 1;
+    var y3 = endperiod.getFullYear();
+
+    var endrange = y3 + '-' + mm2 + '-' + dd1;
+
     D_1 = input_date.split("-");
     D_2 = startrange.split("-");
-    D_3 = confirmed_date.split("-");
+    D_3 = endrange.split("-");
 
-    var d1 = new Date(D_1[2], parseInt(D_1[1]) - 1, D_1[0]);
-    var d2 = new Date(D_2[2], parseInt(D_2[1]) - 1, D_2[0]);
-    var d3 = new Date(D_3[2], parseInt(D_3[1]) - 1, D_3[0]);
+    var d1 = new Date(D_1[0], parseInt(D_1[1]) - 1, D_1[2]); // input date
+    var d2 = new Date(D_2[0], parseInt(D_2[1]) - 1, D_2[1]); //start range
+    var d3 = new Date(D_3[0], parseInt(D_3[1]) - 1, D_3[2]); // confirmed date
 
-    return(d1 < d2 || d1 > d3); // true if date lies outside range
+    if (d1 < d2 || d1 > d3) {
+      invalid = true;
+    }
+
+    console.log(invalid);
+    console.log(onset_date);
+    console.log(startrange);
+    console.log(d1<d2);
+    if (invalid == false){
+      submitrecord(case_number);
+    }
+    else {
+      document.getElementById('output').innerHTML = "Please input date within range!";
+    }
+
 }
 
 function submitrecord(case_number) {
-  if (check_form() == false) {
-  // start of AJAX
   $.ajax({
        type : "POST",
        url: 'ajax/showrecordform',
@@ -189,9 +216,5 @@ function submitrecord(case_number) {
          document.getElementById('output').innerHTML = "Please fill in all fields!"; /* response message */
        }
    });
-  }// End of AJAX
-  else {
-    document.getElementById('output').innerHTML = "Please input date within range!";
-    document.getElementById('date_of_event').innerHTML = " ";
-  }
+  // End of AJAX
 };
