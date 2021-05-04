@@ -7,6 +7,13 @@
     <img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
     <h1>COVID-19 SSEFinder</h1>
 
+    {% if user.is_authenticated %}
+    <a class="logout_btn" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+    {% else %}
+    <a class="logout_btn" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+    {% endif %} 
+
+
     <button class="tab_button" onclick="openTab('Cases')">Cases</button>
     <button class="tab_button" onclick="openTab('SSE_Loc')">SSE Locations</button>
 
