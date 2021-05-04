@@ -132,7 +132,37 @@ function request_coordinate() {
    })
 };
 
+// Check range for date
+function check_form() {
+    var input_date = $('#date_of_event').val()
+    var onset_date = document.getElementById("onset_date").innerHTML
+    var confirmed_date = document.getElementById("date_confirmed").innerHTML
+
+    var date = new Date(onset_date);
+    var startperiod = new Date(date);
+
+    startperiod.setDate(startperiod.getDate() - 3);
+
+    var dd = startperiod.getDate();
+    var mm = startperiod.getMonth() + 1;
+    var y = startperiod.getFullYear();
+
+    var startrange = y + '-' + mm + '-' + dd;
+
+    D_1 = input_date.split("-");
+    D_2 = startrange.split("-");
+    D_3 = confirmed_date.split("-");
+
+    var d1 = new Date(D_1[2], parseInt(D_1[1]) - 1, D_1[0]);
+    var d2 = new Date(D_2[2], parseInt(D_2[1]) - 1, D_2[0]);
+    var d3 = new Date(D_3[2], parseInt(D_3[1]) - 1, D_3[0]);
+
+    return(d1 < d2 || d1 > d3); // true if date lies outside range
+}
+
 function submitrecord(case_number) {
+  if (check_form() == false) {
+  // start of AJAX
   $.ajax({
        type : "POST",
        url: 'ajax/showrecordform',
@@ -145,7 +175,6 @@ function submitrecord(case_number) {
         'date_of_event' : $('#date_of_event').val(),
         'description' : $('#description').val(),
         'event': $('#venue_name').val(),
-        // case: case_classification,
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         'case_number': case_number,
        },
@@ -160,4 +189,9 @@ function submitrecord(case_number) {
          document.getElementById('output').innerHTML = "Please fill in all fields!"; /* response message */
        }
    });
+  }// End of AJAX
+  else {
+    document.getElementById('output').innerHTML = "Please input date within range!";
+    document.getElementById('date_of_event').innerHTML = " ";
+  }
 };

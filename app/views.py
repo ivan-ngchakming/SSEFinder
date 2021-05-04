@@ -28,11 +28,6 @@ def create_post(request):
         response_data['date_of_event'] = date_of_event
         response_data['description'] = description
 
-        # response data for Classification
-        # case = request.POST.get('case', None)
-        # response_data['case'] = case
-        # end of response data for Classification
-
         try:
             event = Event.objects.get(venue_location=venue_location)
         except ObjectDoesNotExist:
