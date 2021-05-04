@@ -141,7 +141,7 @@ function check_form() {
     var date = new Date(onset_date);
     var startperiod = new Date(date);
 
-    startperiod.setDate(startperiod.getDate() - 3);
+    startperiod.setDate(startperiod.getDate() - 14);
 
     var dd = startperiod.getDate();
     var mm = startperiod.getMonth() + 1;
