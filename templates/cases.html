@@ -11,7 +11,7 @@
     <!--Table Entries-->
     {% for case in cases %}
     <tr onclick="showCaseDetail('{{ case.case_number }}');">
-        <td>{{ case.case_number }}</td>
+        <td id="casenum">{{ case.case_number }}</td>
         <td>{{ case.person_name }}</td>
         <td>{{ case.identity_document_number }}</td>
         <td>{{ case.date_of_birth }}</td>
@@ -19,12 +19,21 @@
         <td>{{ case.date_confirmed }}</td>
     </tr>
 
-    <tr id="case_detail_{{ case.case_number }}" style="display:none">
+    <tr id="case_detail_{{ case.case_number }}" id='{{ case.case_number }}' style="display:none">
         <td colspan=6>
             <h3>Attendance Record</h3>
             <table></table>
+            <!-- <p> {{ case }} </p> -->
+            <br>
+            <button type='submit' class="submit_button" onclick="submitrecord('{{ case }}');"
+            style="float:right;background-color: white; color: black; border: 2px solid #203c7c; padding: 8px 12px;">Add Record</button>
+            <b><p id="output" style="font-size: 15px;"></p></b>
         </td>
     </tr>
+
+
+
+
 
     {% endfor %}
 </table>

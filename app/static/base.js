@@ -44,6 +44,7 @@ function showCaseDetail(case_number) {
         dataType: 'html',
         success: function (data) {
           td.getElementsByTagName('Table')[0].innerHTML = data;
+          addrecord();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           document.getElementById(tabname).innerHTML = "Error";
@@ -88,4 +89,69 @@ function showEventDetail(event_name) {
   } else {
     td.style.display = "none";
   }
+};
+
+function addrecord() {
+  $.ajax({
+      url: 'ajax/showrecordform',
+      data: {
+
+      },
+      dataType: 'html',
+      success: function (data) {
+        document.getElementById('RecordBox').innerHTML = data;
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        document.getElementById('RecordBox').innerHTML = "Error";
+      },
+    });
+};
+
+function searchcoord() {
+  var venue_location = document.getElementById("venue_location").value;
+    // GET and show coordinates
+    let endpoint = 'https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=';
+    $.ajax({
+        url: endpoint + venue_location,
+        type: "GET",
+        dataType: 'json',
+        success: function(result){
+           console.log(result);
+           document.getElementById("x_coord_field").innerHTML = result[0]['x'];
+           document.getElementById("y_coord_field").innerHTML = result[0]['y'];
+           document.getElementById("address_field").innerHTML = result[0]['addressEN'];
+        }
+     })
+
+
+};
+
+function submitrecord(case_classification) {
+  console.log(case_classification);
+  $.ajax({
+       type : "POST",
+       url: 'ajax/showrecordform',
+       data: {
+        venue_name : $('#venue_name').val(),
+        venue_location : $('#venue_location').val(),
+        address : document.getElementById("address_field").innerHTML,
+        x_coord : document.getElementById("x_coord_field").innerHTML,
+        y_coord : document.getElementById("y_coord_field").innerHTML,
+        date_of_event : $('#date_of_event').val(),
+        description : $('#description').val(),
+        event: $('#venue_name').val(),
+        // case: case_classification,
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        action: 'post',
+
+       },
+
+       success: function(){
+         document.getElementById('output').innerHTML = "Succesfully added record!"; /* response message */
+       },
+
+       failure: function() {
+         document.getElementById('output').innerHTML = "Please fill in all fields!"; /* response message */
+       }
+   });
 };
