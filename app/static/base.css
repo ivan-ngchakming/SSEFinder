@@ -75,3 +75,20 @@ tr:hover {background-color: #ddd;}
     box-shadow: 5px 5px rgb(119 136 153 / 14%);
     text-align: center;
 }
+
+.logout_btn {
+    float: right;
+    width: 38px;
+    border-radius: 7px;
+    text-decoration: none;
+    color: white;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 10px;
+    padding-left: 10px;
+    background-color: lightgray;
+}
+
+.logout_btn:hover {
+    background-color: grey;
+}
