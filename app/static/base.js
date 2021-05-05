@@ -84,7 +84,8 @@ function query_events() {
 
 function showCaseDetail(case_number) {
   var td = document.getElementById("case_detail_"+case_number);
-  var all_case_detail = document.querySelectorAll('[id^="case_detail_"]')
+  var all_case_detail = document.querySelectorAll('[id^="case_detail_"]');
+  var all_output = document.querySelectorAll('[id^="output_"]');
 
   if (td.style.display == "none") {
     for (i = 0; i < all_case_detail.length; i++) {
@@ -92,6 +93,7 @@ function showCaseDetail(case_number) {
         all_case_detail[i].style.display = "none";
         all_case_detail[i].getElementsByTagName('Table')[0].innerHTML = "";
       } else {
+        document.getElementById('output_'+case_number).innerHTML = "";
         // Turn case deatil for selected case visible
         td.style.display = "table-row";
         document.getElementById('show-add-event-form-' + case_number).style.display = "block";
