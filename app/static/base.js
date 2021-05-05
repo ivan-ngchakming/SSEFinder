@@ -145,10 +145,9 @@ function showEventDetail(event_name) {
           td.getElementsByTagName('Table')[0].innerHTML = data;
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          document.getElementById(tabname).innerHTML = "Error";
+          td.getElementsByTagName('Table')[0].innerHTML = "Error: " + textStatus + " - " + errorThrown;
         },
       });
-
   } else {
     td.style.display = "none";
   }
