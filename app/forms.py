@@ -1,5 +1,6 @@
 from django import forms
-from .models import Event
+from .models import Event, Case
+
 
 class CreateEventForm(forms.ModelForm):
     class Meta:
@@ -14,3 +15,10 @@ class CreateEventForm(forms.ModelForm):
             'description',
             'sse'
         }
+
+
+class CaseModelForm(forms.ModelForm):
+
+    class Meta:
+        model = Case
+        fields = '__all__'

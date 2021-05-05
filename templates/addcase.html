@@ -1,0 +1,25 @@
+
+    <tbody>
+    <!--Table Header-->
+    <tr id="table_header">
+        <th>Case Number</th>
+        <th>Name</th>
+        <th>ID Number</th>
+        <th>Date of Birth</th>
+        <th>Onset Date</th>
+        <th>Confirmed Date</th>
+    </tr>  
+    <!--Table Entries-->
+    <tr>
+        {% csrf_token %}
+        <td>{{ form.case_number }}</td>
+        <td>{{ form.person_name }}</td>
+        <td>{{ form.identity_document_number }}</td>
+        <td>{{ form.date_of_birth }}</td>
+        <td>{{ form.onset_date }}</td>
+        <td>{{ form.date_confirmed }}</td>
+    </tr>
+    </tbody>    
+
+   
+    
