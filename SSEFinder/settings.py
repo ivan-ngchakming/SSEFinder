@@ -32,9 +32,14 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = 'o%yqftu#8x6a@cd9el*l9$-$myr6wm#sx7vr(y+t(347c#=k4d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['ssefinder-comp3297.herokuapp.com/', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'ssefinder-comp3297-sprint2.herokuapp.com',
+    'ssefinder-comp3297.herokuapp.com/',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -87,24 +92,6 @@ WSGI_APPLICATION = 'SSEFinder.wsgi.application'
 # Comment out the line below and fill in line 88-97 to use local postgres database
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': '',
-#         'USER': '',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-# Use SQLite3
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -144,14 +131,15 @@ DATE_FORMAT = 'Y-m-d'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/var/www/ssefinder-comp3297-sprint2.herokuapp.com/com/static/"
 STATIC_ROOT = str(BASE_DIR.joinpath('static'))
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
-
