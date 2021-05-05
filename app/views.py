@@ -182,7 +182,7 @@ def events(request):
             events = Event.objects.filter(sse=True)
         else:
             events = Event.objects.filter(date_of_event__range=[start_date, end_date])
-            events = [event in events if event.sse]
+            events = [event for event in events if event.sse]
 
     else:
         events = Event.objects.filter(sse=True)
