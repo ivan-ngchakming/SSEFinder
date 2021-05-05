@@ -8,7 +8,6 @@ from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 admin.site.register(Event)
 admin.site.register(Case)
 admin.site.register(Classification)
-admin.site.register(UserProfile)
 
 
 class UserProfileInline(admin.StackedInline):
