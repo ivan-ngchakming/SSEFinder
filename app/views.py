@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from datetime import timedelta
+from datetime import timedelta, datetime
 from .models import Event, Case, Classification
 from .forms import CaseModelForm
 
@@ -21,43 +21,50 @@ def create_post(request):
         description = request.POST.get('description', None)  # getting data from description input
         case_number = request.POST.get('case_number', None)
 
-        response_data['venue_name'] = venue_name
-        response_data['venue_location'] = venue_location
-        response_data['address'] = address
-        response_data['x_coord'] = x_coord
-        response_data['y_coord'] = y_coord
-        response_data['date_of_event'] = date_of_event
-        response_data['description'] = description
+        case = Case.objects.get(case_number=case_number)
+        response_data['date_start'] = case.onset_date - timedelta(days=14)
+        response_data['date_end'] = case.date_confirmed
 
         try:
             event = Event.objects.get(venue_location=venue_location)
+            if case.onset_date - timedelta(days=14) > event.date_of_event or case.date_confirmed < event.date_of_event:
+                response_data['date_valid'] = False
+                response_data['event_exist'] = True
+                response_data['venue_name'] = event.venue_name
+                response_data['date_of_event'] = event.date_of_event
+                response_data['description'] = event.description
+            else:
+                response_data['date_valid'] = True
+
         except ObjectDoesNotExist:
-            Event.objects.create(
-                venue_name=venue_name,
-                venue_location=venue_location,
-                address=address,
-                x_coord=x_coord,
-                y_coord=y_coord,
-                date_of_event=date_of_event,
-                description=description,
+            event_date_object = datetime.strptime(date_of_event, "%Y-%m-%d").date()
+            if case.onset_date - timedelta(days=14) > event_date_object or case.date_confirmed < event_date_object:
+                response_data['date_valid'] = False
+                response_data['event_exist'] = False
+            else:
+                response_data['date_valid'] = True
+                Event.objects.create(
+                    venue_name=venue_name,
+                    venue_location=venue_location,
+                    address=address,
+                    x_coord=x_coord,
+                    y_coord=y_coord,
+                    date_of_event=date_of_event,
+                    description=description,
+                )
+                event = Event.objects.get(venue_location=venue_location)
+
+        if response_data['date_valid']:
+            infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
+            infector_status = case.onset_date - timedelta(days=3) <= event.date_of_event
+
+            classification = Classification.objects.create(
+                case=case,
+                event=event,
+                infected=infected_status,
+                infector=infector_status,
             )
-            event = Event.objects.get(venue_location=venue_location)
-
-        case = Case.objects.get(case_number=case_number)
-
-        print(f"onset date: {case.onset_date}")
-        print(f"infected_status: ({case.onset_date - timedelta(days=14)} <= {event.date_of_event})")
-        infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
-        print(f"infector_status: ({case.onset_date - timedelta(days=3)} <= {event.date_of_event})")
-        infector_status = case.onset_date - timedelta(days=3) <= event.date_of_event
-
-        classification = Classification.objects.create(
-            case=case,
-            event=event,
-            infected=infected_status,
-            infector=infector_status,
-        )
-        classification.save()
+            classification.save()
 
         return JsonResponse(response_data)
 

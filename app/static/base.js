@@ -218,88 +218,43 @@ function request_coordinate() {
    })
 };
 
-// Check range for date
-function check_form(case_number, onset_date, date_confirmed) {
-    var invalid = false;
-
-    var input_date = $('#date_of_event').val()
-    var onset_date = onset_date
-    var confirmed_date = date_confirmed
-
-    // parsing onset_date
-    var start_date = new Date(onset_date);
-    var startperiod = new Date(start_date);
-
-    startperiod.setDate(startperiod.getDate() - 14);
-
-    var dd = startperiod.getDate();
-    var mm = startperiod.getMonth() + 1;
-    var y = startperiod.getFullYear();
-
-    var startrange = y + '-' + mm + '-' + dd;
-
-    // parsing confirmed_date
-    var end_date = new Date(confirmed_date);
-    var endperiod = new Date(end_date);
-
-    endperiod.setDate(endperiod.getDate());
-
-    var dd1 = endperiod.getDate();
-    var mm2 = endperiod.getMonth() + 1;
-    var y3 = endperiod.getFullYear();
-
-    var endrange = y3 + '-' + mm2 + '-' + dd1;
-
-    D_1 = input_date.split("-");
-    D_2 = startrange.split("-");
-    D_3 = endrange.split("-");
-
-    var d1 = new Date(D_1[0], parseInt(D_1[1]) - 1, D_1[2]); // input date
-    var d2 = new Date(D_2[0], parseInt(D_2[1]) - 1, D_2[1]); //start range
-    var d3 = new Date(D_3[0], parseInt(D_3[1]) - 1, D_3[2]); // confirmed date
-
-    if (d1 < d2 || d1 > d3) {
-      invalid = true;
-    }
-
-    console.log("Input date is invalid: " + invalid);
-    console.log("Input date: " + d1);
-    console.log("Valid date range: " + d2 + " to " + d3);
-    if (invalid == false){
-      submitrecord(case_number);
-    }
-    else {
-      document.getElementById('output_'+case_number).innerHTML = "Please input date within time period of interest! (" + startrange + " to " + endrange + ")";
-    }
-
-}
 
 function submitrecord(case_number) {
   $.ajax({
-       type : "POST",
-       url: 'ajax/showrecordform',
-       data: {
-        'venue_name' : $('#venue_name').val(),
-        'venue_location' : $('#venue_location').val(),
-        'address' : document.getElementById("address_field").innerHTML,
-        'x_coord' : document.getElementById("x_coord_field").innerHTML,
-        'y_coord' : document.getElementById("y_coord_field").innerHTML,
-        'date_of_event' : $('#date_of_event').val(),
-        'description' : $('#description').val(),
-        'event': $('#venue_name').val(),
-        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        'case_number': case_number,
-       },
+    type : "POST",
+    url: 'ajax/showrecordform',
+    data: {
+      'venue_name' : $('#venue_name').val(),
+      'venue_location' : $('#venue_location').val(),
+      'address' : document.getElementById("address_field").innerHTML,
+      'x_coord' : document.getElementById("x_coord_field").innerHTML,
+      'y_coord' : document.getElementById("y_coord_field").innerHTML,
+      'date_of_event' : $('#date_of_event').val(),
+      'description' : $('#description').val(),
+      'event': $('#venue_name').val(),
+      'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+      'case_number': case_number,
+    },
+    dataType: 'json',
+    success: function(response){
+      if (response.date_valid) {
+        document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
+        showCaseDetail(case_number);
+        showCaseDetail(case_number);
+      } else {
+        var error_msg = "Please input date within time period of interest (" + response.date_start + " to " + response.date_end + ")!<br>";
+        if (response.event_exist) {
+          error_msg = error_msg + "Event already exist, with event date of " + response.date_of_event;
+        }
 
-       success: function(){
-         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
-         showCaseDetail(case_number);
-         showCaseDetail(case_number);
-       },
+        document.getElementById('output_'+case_number).innerHTML = error_msg;
+      }
 
-       failure: function() {
-         document.getElementById('output_' + case_number).innerHTML = "Please fill in all fields!"; /* response message */
-       }
-   });
+    },
+
+    failure: function() {
+      document.getElementById('output_' + case_number).innerHTML = "Error"; /* response message */
+    }
+  });
   // End of AJAX
 };
