@@ -22,6 +22,28 @@ function openTab(tabname) {
 };
 
 
+function query_events() {
+  console.log("Submitting form");
+  $.ajax({
+    type: "POST",
+    url: "ajax/SSE_Loc",
+    data: {
+      'start_date': $('input[id=start_date]').val(),
+      'end_date': $('input[id=end_date]').val(),
+      'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    },
+    dataType: 'html',
+    success: function (data) {
+      console.log("Query success");
+      document.getElementById('SSE_Loc').innerHTML = data;
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+      console.log("Query events by date failed: " + textStatus + " - " + errorThrown);
+    },
+  });
+};
+
+
 function showCaseDetail(case_number) {
   var td = document.getElementById("case_detail_"+case_number);
   if (td.style.display == "none") {

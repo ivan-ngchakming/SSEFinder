@@ -107,24 +107,26 @@ def event_detail(request):
 
     return render(request, "event_detail.html", context)
 
+
 def events(request):
-    if request.method =="POST":
+    if request.method == "POST":
         start_date = request.POST.get("start_date")
         end_date = request.POST.get("end_date")
-        events = Event.objects.filter(date__range=[start_date,end_date])
-        for event in events:
-            event.identify_sse()
 
-        context = {
-            "events": [e for e in events if e.sse],
-        }
-        return render(request, "events.html", context)
+        if start_date == "" or end_date == "":
+            events = Event.objects.filter(sse=True)
+        else:
+            events = Event.objects.filter(date_of_event__range=[start_date, end_date])
+
     else:
-        events = Event.objects.all()
-        for event in events:
-            event.identify_sse()
+        events = Event.objects.filter(sse=True)
 
-        context = {
-            "events": [e for e in events if e.sse],
-        }
-        return render(request, "events.html", context)
+    # Update SSE status for every events to be displayed
+    for event in events:
+        event.identify_sse()
+
+    context = {
+        "events": events,
+    }
+
+    return render(request, "events.html", context)
