@@ -19,13 +19,16 @@ class Case(models.Model):
 
 class Event(models.Model):
     venue_name = models.CharField(max_length=100)
-    venue_location = models.CharField(max_length=100, unique=True)
+    venue_location = models.CharField(max_length=100)
     address = models.CharField(max_length=300, null=True, blank=True)  # Auto updated via api
     x_coord = models.FloatField(null=True, blank=True)  # Auto updated via api
     y_coord = models.FloatField(null=True, blank=True)  # Auto updated via api
     date_of_event = models.DateField()
-    description = models.CharField(max_length=200)
     sse = models.BooleanField(default=False)
+
+    @property
+    def identifier(self):
+        return f"{self.venue_name}, {self.venue_location}, {self.date_of_event}"
 
     def identify_sse(self):
         """Update sse status of event"""
@@ -76,6 +79,7 @@ class Classification(models.Model):
     infector = models.BooleanField()
     case = models.ForeignKey(Case, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    description = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return f"{self.case} - {self.event}"

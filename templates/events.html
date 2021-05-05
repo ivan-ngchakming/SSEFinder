@@ -1,12 +1,3 @@
-<!--<div id="event_query">-->
-<!--    {% csrf_token %}-->
-<!--    <label for="start_date">From:</label>-->
-<!--    <input type="date" id="start_date">-->
-<!--    <label for="end_date">To:</label>-->
-<!--    <input type="date" id="end_date">-->
-<!--    <button onclick="query_events()">Search</button>-->
-<!--</div>-->
-
 <table>
     <!--Table Header-->
     <tr id="table_header">
@@ -15,22 +6,20 @@
         <th>Address</th>
         <th>X Coord</th>
         <th>Y Coord</th>
-        <th>Date of Event</th>
-        <th>Description</th>
+        <th>Date of Event (YYYY-MM-DD)</th>
     </tr>
     <!--Table Entries-->
     {% for event in events %}
-    <tr onclick="showEventDetail('{{ event.venue_name }}')">
+    <tr onclick="showEventDetail('{{ event.venue_name }}', '{{ event.venue_location }}', '{{ event.date_of_event }}')">
         <td>{{ event.venue_name }}</td>
         <td>{{ event.venue_location }}</td>
         <td>{{ event.address }}</td>
         <td>{{ event.x_coord }}</td>
         <td>{{ event.y_coord }}</td>
         <td>{{ event.date_of_event }}</td>
-        <td>{{ event.description }}</td>
     </tr>
 
-    <tr id="event_detail_{{ event.venue_name }}" style="display:none">
+    <tr id="event_detail_{{ event.venue_name }}_{{ event.venue_location }}_{{ event.date_of_event }}" style="display:none">
         <td colspan=7>
             <h3>Cases</h3>
             <table></table>
