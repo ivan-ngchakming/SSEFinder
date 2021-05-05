@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %}SSEFinder{% endblock %}
+
+{% block content %}
+<div class="logcont">
+<img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
+<h1>Centre of Health Protection</h1>
+  {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</p>
+    {% else %}
+      <p>Please enter your username and password.</p>
+    {% endif %}
+  {% endif %}
+
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+    <br>
+    <input type="submit" value="Login" class="login_bttn"/>
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+</div>
+
+{% endblock %}

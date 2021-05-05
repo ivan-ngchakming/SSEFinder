@@ -19,6 +19,41 @@ function openTab(tabname) {
       },
     });
   }
+
+  $(document).ready(function(){
+    $("#case_form").submit(function() {
+      setTimeout(function(){},10000);
+      $.ajax({
+        type: "POST",
+        url: "ajax/success-page",
+        async: false,
+        data: $(this).serialize(),
+        success: function () {
+          alert("Add record success!");
+        },
+        error: function(data){
+          alert("Failed to add record!");
+        },
+      });
+    });
+  });
+
+  if (tabname == "new_case_btn") {
+    case_id = document.querySelectorAll('[id^="case_detail_"]').length + 1
+    $.ajax({
+      url: 'ajax/add_newcase',
+      data: {
+        'case_id': case_id,
+      },
+      dataType: 'html',
+      success: function(data){
+        document.getElementById('addnewcases').innerHTML = data;
+        document.getElementById('id_case_number').defaultValue = case_id;
+        document.getElementById('id_case_number').disabled = true;
+      },
+    });
+  }
+
 };
 
 
@@ -111,3 +146,20 @@ function showEventDetail(event_name) {
     td.style.display = "none";
   }
 };
+
+function submissionroutine(request) {
+  $.ajax({
+    url: 'ajax/success-page',
+    data: { 
+      'request': request,
+    },
+    dataType: 'html',
+    success: function (data) {
+      document.getElementById('addnewcases').innerHTML = "added!!!!";
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      document.getElementById('addnewcases').innerHTML = "Error";
+    },
+  });
+};
+

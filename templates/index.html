@@ -7,12 +7,21 @@
     <img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
     <h1>COVID-19 SSEFinder</h1>
 
+    {% if user.is_authenticated %}
+    <a class="logout_btn" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+    {% else %}
+    <a class="logout_btn" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+    {% endif %}
+
+
     <button class="tab_button" onclick="openTab('Cases')">Cases</button>
     <button class="tab_button" onclick="openTab('SSE_Loc')">SSE Locations</button>
+    <button class="add_new_case_btn" onclick="openTab('new_case_btn')"> + Add New Case</button>
+
     <div id="Cases" class="tab">
         {% include 'cases.html' %}
     </div>
-    
+
     <div id="SSE_Loc" class="tab" style="display:none">
         <form id="event_query">
             {% csrf_token %}
@@ -22,7 +31,7 @@
             <input type="date" id="end_date">
             <button onclick="query_events()">Search</button>
         </form>
-        <table>                                             
+        <table>
         <!--Table Header-->
         <tr id="table_header">
             <th>Venue Name</th>
@@ -42,6 +51,16 @@
 
         </table>
     </div>
-    
-    
+
+    <div id="new_case_btn" class="tab" style="display:none">
+        <form id="case_form" action="" method="POST">
+                <table id='addnewcases'>
+                    {% include 'addcase.html' %}
+                </table>
+            <div class="form-group col-md-2">
+                <input class="add_new_case_btn_2" style="margin-top: 30px;" type="submit" value="+ Add New Case" />
+            </div>
+        </form>
+    </div>
+
 {% endblock %}
