@@ -107,6 +107,18 @@ padding: 15 15 0;
     background-color: grey;
 }
 
-#event_query {
+#nav-bar {
     float: right;
+    display: flex;
+    flex-flow: row wrap;
+    width: auto;
+}
+
+#nav-bar > form {
+    flex-basis: 85%;
+    display: none;
+}
+
+#nav-bar > div {
+    flex-basis: 10%;
 }

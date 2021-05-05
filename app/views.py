@@ -135,21 +135,28 @@ def success(request):
 
     if request.method == 'POST':
         # CHANGED
-        caseno = request.POST['caseno']
+        case_number = request.POST['case_number']
         personname = request.POST['person_name']
         idno = request.POST['identity_document_number']
         dob = request.POST['date_of_birth']
         onset = request.POST['onset_date']
         confirmdate = request.POST['date_confirmed']
 
-        response_data['case_number'] = caseno
+        response_data['case_number'] = case_number
         response_data['person_name'] = personname
         response_data['identity_document_number'] = idno
         response_data['date_of_birth'] = dob
         response_data['onset_date'] = onset
         response_data['date_confirmed'] = confirmdate
 
-        Case.objects.create(case_number=caseno,person_name=personname,identity_document_number=idno,date_of_birth=dob,onset_date=onset,date_confirmed=confirmdate)
+        Case.objects.create(
+            case_number=case_number,
+            person_name=personname,
+            identity_document_number=idno,
+            date_of_birth=dob,
+            onset_date=onset,
+            date_confirmed=confirmdate
+        )
         return JsonResponse(response_data)
 
     return render(request, 'index.html', {})
