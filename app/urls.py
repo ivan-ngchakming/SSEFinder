@@ -9,5 +9,4 @@ urlpatterns = [
     path('ajax/showrecordform', views.create_post, name='ShowRecord'),
     path('ajax/event_detail', views.event_detail, name='Event detail'),
     path('ajax/add_newcase', views.addcase, name='Add case'),
-    path('ajax/success-page', views.success, name='success'),
 ]

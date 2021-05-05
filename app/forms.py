@@ -12,7 +12,6 @@ class CreateEventForm(forms.ModelForm):
             'x_coord',
             'y_coord',
             'date_of_event',
-            'description',
             'sse'
         }
 

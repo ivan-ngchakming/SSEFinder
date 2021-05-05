@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 from datetime import timedelta, datetime
 from .models import Event, Case, Classification
 from .forms import CaseModelForm
@@ -25,8 +25,11 @@ def create_post(request):
         response_data['date_start'] = case.onset_date - timedelta(days=14)
         response_data['date_end'] = case.date_confirmed
 
-        try:
-            event = Event.objects.get(venue_location=venue_location)
+        identifier = f"{venue_name}, {venue_location}, {date_of_event}"
+        event = [event for event in Event.objects.all() if event.identifier == identifier]
+
+        if len(event) == 1:
+            event = event[0]
             if case.onset_date - timedelta(days=14) > event.date_of_event or case.date_confirmed < event.date_of_event:
                 response_data['date_valid'] = False
                 response_data['event_exist'] = True
@@ -36,7 +39,7 @@ def create_post(request):
             else:
                 response_data['date_valid'] = True
 
-        except ObjectDoesNotExist:
+        elif len(event) == 0:
             event_date_object = datetime.strptime(date_of_event, "%Y-%m-%d").date()
             if case.onset_date - timedelta(days=14) > event_date_object or case.date_confirmed < event_date_object:
                 response_data['date_valid'] = False
@@ -50,9 +53,10 @@ def create_post(request):
                     x_coord=x_coord,
                     y_coord=y_coord,
                     date_of_event=date_of_event,
-                    description=description,
                 )
-                event = Event.objects.get(venue_location=venue_location)
+                event = [event for event in Event.objects.all() if event.identifier == identifier]
+        else:
+            raise Exception("Something went wrong")
 
         if response_data['date_valid']:
             infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
@@ -63,6 +67,7 @@ def create_post(request):
                 event=event,
                 infected=infected_status,
                 infector=infector_status,
+                description=description,
             )
             classification.save()
 
@@ -74,7 +79,7 @@ def create_post(request):
 
 @login_required
 def index(request):
-    cases = Case.objects.all()
+    cases = sorted(Case.objects.all(), key=lambda x: x.onset_date)
 
     context = {
         'cases': cases,
@@ -88,10 +93,11 @@ def case_detail(request):
     case_number = request.GET.get('case_number', None)
 
     case = Case.objects.get(pk=case_number)
-    all_classifications = case.classification_set.all()
+    all_classifications = sorted(case.classification_set.all(), key=lambda x: x.event.date_of_event)
     events = [classification.event for classification in all_classifications]
     classifications = [event.get_classification_str(case.case_number) for event in events]
-    events = list(zip(events, classifications))
+    descriptions = [classification.description for classification in all_classifications]
+    events = list(zip(events, classifications, descriptions))
 
     context = {
         'case': case,
@@ -104,12 +110,17 @@ def case_detail(request):
 @login_required
 def event_detail(request):
     event_name = request.GET.get('event_name', None)
+    event_location = request.GET.get('event_location', None)
+    date_of_event = request.GET.get('date_of_event', None)
 
-    event = Event.objects.get(venue_name=event_name)
+    identifier = f"{event_name}, {event_location}, {date_of_event}"
+    event = [event for event in Event.objects.all() if event.identifier == identifier][0]
+
     all_classifications = event.classification_set.all()
     cases = [classification.case for classification in all_classifications]
     classifications = [event.get_classification_str(case.case_number) for case in cases]
-    cases = list(zip(cases, classifications))
+    descriptions = [classification.description for classification in all_classifications]
+    cases = list(zip(cases, classifications, descriptions))
 
     context = {
         'cases': cases,
@@ -122,56 +133,41 @@ def event_detail(request):
 def addcase(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = CaseModelForm(request.POST)
+        case_number = request.POST.get('case_number', None)
+        personname = request.POST.get('person_name', None)
+        idno = request.POST.get('identity_document_number', None)
+        dob = request.POST.get('date_of_birth', None)
+        onset = request.POST.get('onset_date', None)
+        confirmdate = request.POST.get('date_confirmed', None)
 
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            print('123')
-            # redirect to a new URL:
+        response_data = {}
+        if case_number == "" or personname == "" or idno == "" or  dob == "" or  onset == "" or  confirmdate == "":
+            response_data['success'] = False
+            response_data['error_msg'] = "Please fill in all fields."
+            return JsonResponse(response_data)
+        else:
+            try:
+                Case.objects.create(
+                    case_number=case_number,
+                    person_name=personname,
+                    identity_document_number=idno,
+                    date_of_birth=dob,
+                    onset_date=onset,
+                    date_confirmed=confirmdate
+                )
+                response_data['success'] = True
+            except IntegrityError as e:
+                response_data['success'] = False
+                response_data['error_msg'] = "Error: " + str(e.__cause__)
+
+            return JsonResponse(response_data)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = CaseModelForm()
         case_number = request.GET.get('case_id', None)
-        print('form ok')
 
     return render(request, 'addcase.html', {'form': form, 'case_no': case_number})
-
-
-@login_required
-def success(request):
-    print('in success function')
-    response_data = {}
-
-    if request.method == 'POST':
-        # CHANGED
-        case_number = request.POST['case_number']
-        personname = request.POST['person_name']
-        idno = request.POST['identity_document_number']
-        dob = request.POST['date_of_birth']
-        onset = request.POST['onset_date']
-        confirmdate = request.POST['date_confirmed']
-
-        response_data['case_number'] = case_number
-        response_data['person_name'] = personname
-        response_data['identity_document_number'] = idno
-        response_data['date_of_birth'] = dob
-        response_data['onset_date'] = onset
-        response_data['date_confirmed'] = confirmdate
-
-        Case.objects.create(
-            case_number=case_number,
-            person_name=personname,
-            identity_document_number=idno,
-            date_of_birth=dob,
-            onset_date=onset,
-            date_confirmed=confirmdate
-        )
-        return JsonResponse(response_data)
-
-    return render(request, 'index.html', {})
 
 
 @login_required

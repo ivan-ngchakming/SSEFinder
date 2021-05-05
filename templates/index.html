@@ -4,14 +4,17 @@
 
 {% block content %}
 
-<div class="container">
-  <div class="image">
-    <img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
-  </div>
-  <div class="text">
-    <h1>COVID-19 SSEFinder</h1>
-  </div>
-</div>
+    <div class="container">
+        <div class="image">
+            <a href="/">
+                <img id="icon" src="{% static 'favicon.ico' %}" alt="CHP Logo" width="50" height="50">
+            </a>
+        </div>
+        <div class="text">
+            <h1>COVID-19 SSEFinder</h1>
+        </div>
+    </div>
+
 
     <div id="nav-bar">
         <form id="event_query">
@@ -69,8 +72,9 @@
                     {% include 'addcase.html' %}
                 </table>
             <div class="form-group col-md-2">
-                <input class="add_new_case_btn_2" style="margin-top: 30px;" type="submit" value="+ Add New Case" />
+                <input class="add_new_case_btn_2" onclick="submitCaseForm()" style="margin-top: 30px;" type="button" value="+ Add New Case" />
             </div>
+            <p id="add_new_case_output"></p>
         </form>
     </div>
 

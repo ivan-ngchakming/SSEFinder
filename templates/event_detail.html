@@ -2,10 +2,11 @@
     <th>Case Number</th>
     <th>Name</th>
     <th>ID Number</th>
-    <th>Date of Birth</th>
-    <th>Onset Date</th>
-    <th>Confirmed Date</th>
+    <th>Date of Birth (YYYY-MM-DD)</th>
+    <th>Onset Date (YYYY-MM-DD)</th>
+    <th>Confirmed Date (YYYY-MM-DD)</th>
     <th>Classification</th>
+    <th>Description</th>
 </tr>
 
 {% for case in cases %}
@@ -17,5 +18,6 @@
     <td>{{ case.0.onset_date }}</td>
     <td>{{ case.0.date_confirmed }}</td>
     <td>{{ case.1 }}</td>
+    <td>{{ case.2 }}</td>
 </tr>
 {% endfor %}
