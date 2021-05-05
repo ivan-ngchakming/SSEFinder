@@ -1,1 +1,1 @@
-web: gunicorn SSEFinder.wsgi --log-file -
+web: python manage.py collectstatic & gunicorn SSEFinder.wsgi --log-file -

@@ -131,10 +131,12 @@ DATE_FORMAT = 'Y-m-d'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/var/www/ssefinder-comp3297-sprint2.herokuapp.com/com/static/"
 STATIC_ROOT = str(BASE_DIR.joinpath('static'))
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
