@@ -1,12 +1,11 @@
-import requests
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.contrib import messages
-from django.shortcuts import redirect
-
-from .models import Event, Case, Classification
+from django.contrib.auth.decorators import login_required
+from .models import Event, Case
 from .forms import CaseModelForm
 
+
+@login_required
 def index(request):
     # Create dummy data
     # from faker import Faker
@@ -30,6 +29,7 @@ def index(request):
     return render(request, "index.html", context)
 
 
+@login_required
 def case_detail(request):
     # Create Dummy Event data
     # locations = [
@@ -89,10 +89,7 @@ def case_detail(request):
     return render(request, "case_detail.html", context)
 
 
-def login(request):
-    return HttpResponse("Login")
-
-
+@login_required
 def events(request):
     events = Event.objects.all()
 
@@ -106,6 +103,7 @@ def events(request):
     return render(request, "events.html", context)
 
 
+@login_required
 def event_detail(request):
     event_name = request.GET.get('event_name', None)
 
@@ -121,8 +119,10 @@ def event_detail(request):
 
     return render(request, "event_detail.html", context)
 
+
+@login_required
 def addcase(request):
-# if this is a POST request we need to process the form data
+    # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = CaseModelForm(request.POST)
@@ -132,20 +132,23 @@ def addcase(request):
             # process the data in form.cleaned_data as required
             print('123')
             # redirect to a new URL:
-        
+
     # if a GET (or any other method) we'll create a blank form
     else:
         form = CaseModelForm()
         case_number = request.GET.get('case_id', None)
         print('form ok')
+
     return render(request, 'addcase.html', {'form': form, 'case_no': case_number})
 
+
+@login_required
 def success(request):
     print('in success function')
     response_data = {}
 
     if request.method == 'POST':
-        #CHANGED
+        # CHANGED
         caseno = request.POST['caseno']
         personname = request.POST['person_name']
         idno = request.POST['identity_document_number']
@@ -159,13 +162,8 @@ def success(request):
         response_data['date_of_birth'] = dob
         response_data['onset_date'] = onset
         response_data['date_confirmed'] = confirmdate
-    
+
         Case.objects.create(case_number=caseno,person_name=personname,identity_document_number=idno,date_of_birth=dob,onset_date=onset,date_confirmed=confirmdate)
         return JsonResponse(response_data)
-        
-    return render(request, 'index.html', {
-        'response': res,
-    })
 
-    # return render(request, 'success.html', {'first_name': newdata.location_name, 'last_name': newdata.reporteddate})
-    # return render(request, 'addcase.html',locals())
+    return render(request, 'index.html', {})
