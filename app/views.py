@@ -11,7 +11,6 @@ from .forms import CaseModelForm
 def create_post(request):
     response_data = {}
     if request.method == 'POST':
-        print("Processing post request")
         venue_name = request.POST.get('venue_name', None)  # getting data from venue_name input
         venue_location = request.POST.get('venue_location', None)  # getting data from venue_location input
         address = request.POST.get('address', None)  # getting data from address input
@@ -32,10 +31,6 @@ def create_post(request):
             event = event[0]
             if case.onset_date - timedelta(days=14) > event.date_of_event or case.date_confirmed < event.date_of_event:
                 response_data['date_valid'] = False
-                response_data['event_exist'] = True
-                response_data['venue_name'] = event.venue_name
-                response_data['date_of_event'] = event.date_of_event
-                response_data['description'] = event.description
             else:
                 response_data['date_valid'] = True
 
@@ -43,7 +38,6 @@ def create_post(request):
             event_date_object = datetime.strptime(date_of_event, "%Y-%m-%d").date()
             if case.onset_date - timedelta(days=14) > event_date_object or case.date_confirmed < event_date_object:
                 response_data['date_valid'] = False
-                response_data['event_exist'] = False
             else:
                 response_data['date_valid'] = True
                 Event.objects.create(
@@ -58,6 +52,7 @@ def create_post(request):
         else:
             raise Exception("Something went wrong")
 
+        print("Check if date is valid")
         if response_data['date_valid']:
             infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
             infector_status = case.onset_date - timedelta(days=3) <= event.date_of_event

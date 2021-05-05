@@ -98,17 +98,14 @@ function submitrecord(case_number) {
     },
     dataType: 'json',
     success: function(response){
+      console.log("Processing new record js");
       if (response.date_valid) {
         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
         showCaseDetail(case_number);
         showCaseDetail(case_number);
         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
       } else {
-        var error_msg = "Please input date within time period of interest (" + response.date_start + " to " + response.date_end + ")!<br>";
-        if (response.event_exist) {
-          error_msg = error_msg + "Event already exist, with event date of " + response.date_of_event;
-        }
-
+        var error_msg = "Please input date within time period of interest (" + response.date_start + " to " + response.date_end + ")!";
         document.getElementById('output_'+case_number).innerHTML = error_msg;
       }
 
