@@ -16,7 +16,7 @@ class Case(models.Model):
 
 class Event(models.Model):
     venue_name = models.CharField(max_length=100)
-    venue_location = models.CharField(max_length=100)
+    venue_location = models.CharField(max_length=100, unique=True)
     address = models.CharField(max_length=300, null=True, blank=True)  # Auto updated via api
     x_coord = models.FloatField(null=True, blank=True)  # Auto updated via api
     y_coord = models.FloatField(null=True, blank=True)  # Auto updated via api
@@ -65,7 +65,7 @@ class Event(models.Model):
         return ", ".join(self.get_classification(case_number))
 
     def __str__(self):
-        return self.venue_name
+        return f"{self.venue_name}, {self.venue_location}"
 
 
 class Classification(models.Model):

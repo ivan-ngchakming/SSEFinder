@@ -1,0 +1,21 @@
+<!-- ADD ATTENDANCE RECORDS HERE -->
+
+<form method='POST' id='attendanceform'>
+{% csrf_token %}
+
+<td><input type="text" id="venue_name"></td>
+
+<td><input type="text" id="venue_location" onclick="searchcoord()"> </td>
+
+<td id="address_field"><input type="hidden" id="address"></td>
+
+<td id="x_coord_field"><input type="hidden" id="x_coord"></td>
+
+<td id="y_coord_field"><input type="hidden" id="y_coord"></td>
+
+<td id="date_field"><input type="text" id="date_of_event"></td>
+
+<td><input type="text" id="description"></td>
+
+<td id="classification"></td>
+</form>

@@ -11,18 +11,23 @@
     <!--Table Entries-->
     {% for case in cases %}
     <tr onclick="showCaseDetail('{{ case.case_number }}');">
-        <td>{{ case.case_number }}</td>
+        <td id="casenum">{{ case.case_number }}</td>
         <td>{{ case.person_name }}</td>
         <td>{{ case.identity_document_number }}</td>
         <td>{{ case.date_of_birth }}</td>
-        <td>{{ case.onset_date }}</td>
-        <td>{{ case.date_confirmed }}</td>
+        <td id="onset_date">{{ case.onset_date }}</td>
+        <td id="date_confirmed">{{ case.date_confirmed }}</td>
     </tr>
 
-    <tr id="case_detail_{{ case.case_number}}" style="display:none">
+    <tr id="case_detail_{{ case.case_number }}" id='{{ case.case_number }}' style="display:none">
         <td colspan=6>
             <h3>Attendance Record</h3>
-            <table></table>
+            <table>
+            </table>
+            <br>
+            <button id="show-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="showRecordForm('{{ case.case_number }}');">Add Record</button>
+            <button id="submit-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="check_form('{{ case.case_number }}', '{{ case.onset_date}}', '{{ case.date_confirmed }}');" style="display:none">Add Record</button>
+            <b><p id="output_{{ case.case_number }}" style="font-size: 15px;"></p></b>
         </td>
     </tr>
 

@@ -1,8 +1,58 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Event, Case
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Event, Case, Classification
 from .forms import CaseModelForm
+
+
+@login_required
+def create_post(request):
+    response_data = {}
+    if request.method == 'POST':
+        print("Processing post request")
+        venue_name = request.POST.get('venue_name', None)  # getting data from venue_name input
+        venue_location = request.POST.get('venue_location', None)  # getting data from venue_location input
+        address = request.POST.get('address', None)  # getting data from address input
+        x_coord = request.POST.get('x_coord', None)  # getting data from x_coord input
+        y_coord = request.POST.get('y_coord', None)  # getting data from y_coord input
+        date_of_event = request.POST.get('date_of_event', None)  # getting data from date_of_event input
+        description = request.POST.get('description', None)  # getting data from description input
+        case_number = request.POST.get('case_number', None)
+
+        response_data['venue_name'] = venue_name
+        response_data['venue_location'] = venue_location
+        response_data['address'] = address
+        response_data['x_coord'] = x_coord
+        response_data['y_coord'] = y_coord
+        response_data['date_of_event'] = date_of_event
+        response_data['description'] = description
+
+        try:
+            event = Event.objects.get(venue_location=venue_location)
+        except ObjectDoesNotExist:
+            event = Event.objects.create(
+                venue_name=venue_name,
+                venue_location=venue_location,
+                address=address,
+                x_coord=x_coord,
+                y_coord=y_coord,
+                date_of_event=date_of_event,
+                description=description,
+            )
+            event.save()
+        classification = Classification.objects.create(
+            case=Case.objects.get(case_number=case_number),
+            event=event,
+            infected=True,
+            infector=False,
+        )
+        classification.save()
+
+        return JsonResponse(response_data)
+
+    else:
+        return render(request, 'showrecordform.html', {'events': events})
 
 
 @login_required
