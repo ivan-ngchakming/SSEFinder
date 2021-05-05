@@ -169,6 +169,11 @@ def success(request):
 
 @login_required
 def events(request):
+    # Update SSE status for every events to be displayed
+    events = Event.objects.all()
+    for event in events:
+        event.identify_sse()
+
     if request.method == "POST":
         start_date = request.POST.get("start_date")
         end_date = request.POST.get("end_date")
@@ -177,13 +182,10 @@ def events(request):
             events = Event.objects.filter(sse=True)
         else:
             events = Event.objects.filter(date_of_event__range=[start_date, end_date])
+            events = [event in events if event.sse]
 
     else:
         events = Event.objects.filter(sse=True)
-
-    # Update SSE status for every events to be displayed
-    for event in events:
-        event.identify_sse()
 
     context = {
         "events": events,
