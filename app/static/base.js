@@ -24,14 +24,18 @@ function openTab(tabname) {
 
 function showCaseDetail(case_number) {
   var td = document.getElementById("case_detail_"+case_number);
+  var all_case_detail = document.querySelectorAll('[id^="case_detail_"]')
+
   if (td.style.display == "none") {
-    var all_case_detail = document.querySelectorAll('[id^="case_detail_"]')
     for (i = 0; i < all_case_detail.length; i++) {
       if (all_case_detail[i].id != td.id) {
         all_case_detail[i].style.display = "none";
+        all_case_detail[i].getElementsByTagName('Table')[0].innerHTML = "";
       } else {
         // Turn case deatil for selected case visible
         td.style.display = "table-row";
+        document.getElementById('show-add-event-form-' + case_number).style.display = "block";
+        document.getElementById('submit-add-event-form-' + case_number).style.display = "none";
         td.getElementsByTagName('Table')[0].innerHTML = "Loading..."
       }
     }
@@ -124,11 +128,15 @@ function request_coordinate() {
       type: "GET",
       dataType: 'json',
       success: function(result){
-         console.log(result);
-         document.getElementById("x_coord_field").innerHTML = result[0]['x'];
-         document.getElementById("y_coord_field").innerHTML = result[0]['y'];
-         document.getElementById("address_field").innerHTML = result[0]['addressEN'];
-      }
+        console.log(result);
+        console.log(typeof(result));
+        document.getElementById("x_coord_field").innerHTML = result[0]['x'];
+        document.getElementById("y_coord_field").innerHTML = result[0]['y'];
+        document.getElementById("address_field").innerHTML = result[0]['addressEN'];
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        console.log("Request Coordinate failed!");
+      },
    })
 };
 
