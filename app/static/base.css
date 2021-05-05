@@ -106,3 +106,19 @@ padding: 15 15 0;
 .logout_btn:hover {
     background-color: grey;
 }
+
+#nav-bar {
+    float: right;
+    display: flex;
+    flex-flow: row wrap;
+    width: auto;
+}
+
+#nav-bar > form {
+    flex-basis: 85%;
+    display: none;
+}
+
+#nav-bar > div {
+    flex-basis: 10%;
+}

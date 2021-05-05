@@ -7,6 +7,8 @@ function openTab(tabname) {
   document.getElementById(tabname).style.display = "block";
 
   if (tabname == "SSE_Loc") {
+    document.getElementById("nav-bar").style.width = "500px";
+    document.getElementById("event_query").style.display = "block";
     $.ajax({
       url: 'ajax/SSE_Loc',
       data: {},
@@ -18,6 +20,9 @@ function openTab(tabname) {
         document.getElementById(tabname).innerHTML = "Error";
       },
     });
+  } else {
+    document.getElementById("nav-bar").style.width = "auto";
+    document.getElementById("event_query").style.display = "none";
   }
 
   $(document).ready(function(){
@@ -30,6 +35,7 @@ function openTab(tabname) {
         data: $(this).serialize(),
         success: function () {
           alert("Add record success!");
+          openTab('Cases');
         },
         error: function(data){
           alert("Failed to add record!");
@@ -39,21 +45,40 @@ function openTab(tabname) {
   });
 
   if (tabname == "new_case_btn") {
-    case_id = document.querySelectorAll('[id^="case_detail_"]').length + 1
     $.ajax({
       url: 'ajax/add_newcase',
-      data: {
-        'case_id': case_id,
-      },
+      data: {},
       dataType: 'html',
       success: function(data){
         document.getElementById('addnewcases').innerHTML = data;
-        document.getElementById('id_case_number').defaultValue = case_id;
-        document.getElementById('id_case_number').disabled = true;
+//        document.getElementById('id_case_number').defaultValue = case_id;
+//        document.getElementById('id_case_number').disabled = true;
       },
     });
   }
 
+};
+
+
+function query_events() {
+  console.log("Submitting form");
+  $.ajax({
+    type: "POST",
+    url: "ajax/SSE_Loc",
+    data: {
+      'start_date': $('input[id=start_date]').val(),
+      'end_date': $('input[id=end_date]').val(),
+      'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    },
+    dataType: 'html',
+    success: function (data) {
+      console.log("Query success");
+      document.getElementById('SSE_Loc').innerHTML = data;
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+      console.log("Query events by date failed: " + textStatus + " - " + errorThrown);
+    },
+  });
 };
 
 

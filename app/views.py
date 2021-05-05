@@ -90,20 +90,6 @@ def case_detail(request):
 
 
 @login_required
-def events(request):
-    events = Event.objects.all()
-
-    # Update SSE status for all events
-    for event in events:
-        event.identify_sse()
-
-    context = {
-        'events': [e for e in events if e.sse],
-    }
-    return render(request, "events.html", context)
-
-
-@login_required
 def event_detail(request):
     event_name = request.GET.get('event_name', None)
 
@@ -149,21 +135,53 @@ def success(request):
 
     if request.method == 'POST':
         # CHANGED
-        caseno = request.POST['caseno']
+        case_number = request.POST['case_number']
         personname = request.POST['person_name']
         idno = request.POST['identity_document_number']
         dob = request.POST['date_of_birth']
         onset = request.POST['onset_date']
         confirmdate = request.POST['date_confirmed']
 
-        response_data['case_number'] = caseno
+        response_data['case_number'] = case_number
         response_data['person_name'] = personname
         response_data['identity_document_number'] = idno
         response_data['date_of_birth'] = dob
         response_data['onset_date'] = onset
         response_data['date_confirmed'] = confirmdate
 
-        Case.objects.create(case_number=caseno,person_name=personname,identity_document_number=idno,date_of_birth=dob,onset_date=onset,date_confirmed=confirmdate)
+        Case.objects.create(
+            case_number=case_number,
+            person_name=personname,
+            identity_document_number=idno,
+            date_of_birth=dob,
+            onset_date=onset,
+            date_confirmed=confirmdate
+        )
         return JsonResponse(response_data)
 
     return render(request, 'index.html', {})
+
+
+@login_required
+def events(request):
+    if request.method == "POST":
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+
+        if start_date == "" or end_date == "":
+            events = Event.objects.filter(sse=True)
+        else:
+            events = Event.objects.filter(date_of_event__range=[start_date, end_date])
+
+    else:
+        events = Event.objects.filter(sse=True)
+
+    # Update SSE status for every events to be displayed
+    for event in events:
+        event.identify_sse()
+
+    context = {
+        "events": events,
+    }
+
+    return render(request, "events.html", context)
