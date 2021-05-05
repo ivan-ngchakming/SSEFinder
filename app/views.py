@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import timedelta
 from .models import Event, Case, Classification
 from .forms import CaseModelForm
 
@@ -31,7 +32,7 @@ def create_post(request):
         try:
             event = Event.objects.get(venue_location=venue_location)
         except ObjectDoesNotExist:
-            event = Event.objects.create(
+            Event.objects.create(
                 venue_name=venue_name,
                 venue_location=venue_location,
                 address=address,
@@ -40,12 +41,21 @@ def create_post(request):
                 date_of_event=date_of_event,
                 description=description,
             )
-            event.save()
+            event = Event.objects.get(venue_location=venue_location)
+
+        case = Case.objects.get(case_number=case_number)
+
+        print(f"onset date: {case.onset_date}")
+        print(f"infected_status: ({case.onset_date - timedelta(days=14)} <= {event.date_of_event})")
+        infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
+        print(f"infector_status: ({case.onset_date - timedelta(days=3)} <= {event.date_of_event})")
+        infector_status = case.onset_date - timedelta(days=3) <= event.date_of_event
+
         classification = Classification.objects.create(
-            case=Case.objects.get(case_number=case_number),
+            case=case,
             event=event,
-            infected=True,
-            infector=False,
+            infected=infected_status,
+            infector=infector_status,
         )
         classification.save()
 
@@ -57,19 +67,6 @@ def create_post(request):
 
 @login_required
 def index(request):
-    # Create dummy data
-    # from faker import Faker
-    # fake = Faker()
-    # for i in range(10):
-    #     new_case = Case()
-    #     new_case.case_number = i
-    #     new_case.person_name = fake.name()
-    #     new_case.identity_document_number = fake.isbn10()
-    #     new_case.date_of_birth = fake.date_object()
-    #     new_case.onset_date = fake.date_object()
-    #     new_case.date_confirmed = fake.date_object()
-    #     new_case.save()
-
     cases = Case.objects.all()
 
     context = {
@@ -81,48 +78,6 @@ def index(request):
 
 @login_required
 def case_detail(request):
-    # Create Dummy Event data
-    # locations = [
-    #     ("Kam Lok Hin Chicken and Fish Pot", "Conwell Mansion"),
-    #     ("Dynasty II", "The Dynasty Club"),
-    #     ("Hong Kong Cultural Centre Administration Building", "Hong Kong Cultural Centre Administration Building"),
-    #     ("The Flying Frenchman", "The Flying Frenchman"),
-    # ]
-    # from faker import Faker
-    # fake = Faker()
-    # for location in locations:
-    #     new_event = Event()
-    #     new_event.venue_name = location[0]
-    #     new_event.venue_location = location[1]
-    #     new_event.date_of_event = fake.date_object()
-    #     new_event.description = fake.text(200)
-    #     new_event.save()
-    #
-    # cases = Case.objects.all()
-    # events = Event.objects.all()
-    # for i, case in enumerate(cases):
-    #     for j, event in enumerate(events):
-    #         if i == j:
-    #             new_class = Classification(
-    #                 infected=True,
-    #                 infector=True,
-    #                 case=case,
-    #                 event=event
-    #             )
-    #             new_class.save()
-    #         if i > j:
-    #             new_class = Classification(
-    #                 infected=True,
-    #                 infector=False,
-    #                 case=case,
-    #                 event=event
-    #             )
-    #             new_class.save()
-    # for event in events:
-    #     event.update_geodata()
-    #     event.save()
-    # Dummy data entry end
-
     case_number = request.GET.get('case_number', None)
 
     case = Case.objects.get(pk=case_number)
