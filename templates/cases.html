@@ -27,7 +27,7 @@
             <br>
             <button id="show-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="showRecordForm('{{ case.case_number }}');">Add Record</button>
             <button id="submit-add-event-form-{{ case.case_number }}" type='submit' class="add_event_button" onclick="check_form('{{ case.case_number }}', '{{ case.onset_date}}', '{{ case.date_confirmed }}');" style="display:none">Add Record</button>
-            <b><p id="output" style="font-size: 15px;"></p></b>
+            <b><p id="output_{{ case.case_number }}" style="font-size: 15px;"></p></b>
         </td>
     </tr>
 

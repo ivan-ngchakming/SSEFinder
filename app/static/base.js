@@ -35,7 +35,7 @@ function openTab(tabname) {
         data: $(this).serialize(),
         success: function () {
           alert("Add record success!");
-          openTab('Cases');
+          location.reload();
         },
         error: function(data){
           alert("Failed to add record!");
@@ -262,15 +262,14 @@ function check_form(case_number, onset_date, date_confirmed) {
       invalid = true;
     }
 
-    console.log(invalid);
-    console.log(onset_date);
-    console.log(startrange);
-    console.log(d1<d2);
+    console.log("Input date is invalid: " + invalid);
+    console.log("Input date: " + d1);
+    console.log("Valid date range: " + d2 + " to " + d3);
     if (invalid == false){
       submitrecord(case_number);
     }
     else {
-      document.getElementById('output').innerHTML = "Please input date within range!";
+      document.getElementById('output_'+case_number).innerHTML = "Please input date within time period of interest! (" + startrange + " to " + endrange + ")";
     }
 
 }
@@ -293,13 +292,13 @@ function submitrecord(case_number) {
        },
 
        success: function(){
-         document.getElementById('output').innerHTML = "Succesfully added record!"; /* response message */
+         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
          showCaseDetail(case_number);
          showCaseDetail(case_number);
        },
 
        failure: function() {
-         document.getElementById('output').innerHTML = "Please fill in all fields!"; /* response message */
+         document.getElementById('output_' + case_number).innerHTML = "Please fill in all fields!"; /* response message */
        }
    });
   // End of AJAX
