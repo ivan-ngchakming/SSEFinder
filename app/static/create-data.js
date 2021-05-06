@@ -99,21 +99,18 @@ function submitrecord(case_number) {
     dataType: 'json',
     success: function(response){
       console.log("Processing new record js");
-      if (response.date_valid) {
+      if (response.valid) {
         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
         showCaseDetail(case_number);
         showCaseDetail(case_number);
         document.getElementById('output_' + case_number).innerHTML = "Succesfully added record!"; /* response message */
       } else {
-        var error_msg = "Please input date within time period of interest (" + response.date_start + " to " + response.date_end + ")!";
-        document.getElementById('output_'+case_number).innerHTML = error_msg;
+        document.getElementById('output_'+case_number).innerHTML = response.error_msg;
       }
-
     },
-
     failure: function() {
+      console.log("Failed to add new attendence");
       document.getElementById('output_' + case_number).innerHTML = "Error"; /* response message */
     }
   });
-  // End of AJAX
 };

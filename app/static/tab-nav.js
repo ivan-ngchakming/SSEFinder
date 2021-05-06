@@ -26,6 +26,7 @@ function openTab(tabname) {
   }
 
   if (tabname == "new_case_btn") {
+    document.getElementById('add_new_case_btn_upper').style.display = "none";
     $.ajax({
       url: 'ajax/add_newcase',
       data: {},
@@ -34,5 +35,7 @@ function openTab(tabname) {
         document.getElementById('addnewcases').innerHTML = data;
       },
     });
+  } else {
+    document.getElementById('add_new_case_btn_upper').style.display = "block";
   }
 };
