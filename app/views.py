@@ -20,9 +20,12 @@ def create_post(request):
         description = request.POST.get('description', None)  # getting data from description input
         case_number = request.POST.get('case_number', None)
 
+        if venue_name == "" or venue_location == "" or date_of_event == "":
+            response_data['valid'] = False
+            response_data['error_msg'] = "Please fill in all required fields (venue name, venue location, date of event)."
+            return JsonResponse(response_data)
+
         case = Case.objects.get(case_number=case_number)
-        response_data['date_start'] = case.onset_date - timedelta(days=14)
-        response_data['date_end'] = case.date_confirmed
 
         identifier = f"{venue_name}, {venue_location}, {date_of_event}"
         event = [event for event in Event.objects.all() if event.identifier == identifier]
@@ -30,16 +33,16 @@ def create_post(request):
         if len(event) == 1:
             event = event[0]
             if case.onset_date - timedelta(days=14) > event.date_of_event or case.date_confirmed < event.date_of_event:
-                response_data['date_valid'] = False
+                response_data['valid'] = False
             else:
-                response_data['date_valid'] = True
+                response_data['valid'] = True
 
         elif len(event) == 0:
             event_date_object = datetime.strptime(date_of_event, "%Y-%m-%d").date()
             if case.onset_date - timedelta(days=14) > event_date_object or case.date_confirmed < event_date_object:
-                response_data['date_valid'] = False
+                response_data['valid'] = False
             else:
-                response_data['date_valid'] = True
+                response_data['valid'] = True
                 Event.objects.create(
                     venue_name=venue_name,
                     venue_location=venue_location,
@@ -52,8 +55,7 @@ def create_post(request):
         else:
             raise Exception("Something went wrong")
 
-        print("Check if date is valid")
-        if response_data['date_valid']:
+        if response_data['valid']:
             infected_status = case.onset_date - timedelta(days=14) <= event.date_of_event
             infector_status = case.onset_date - timedelta(days=3) <= event.date_of_event
 
@@ -65,7 +67,8 @@ def create_post(request):
                 description=description,
             )
             classification.save()
-
+        else:
+            response_data['error_msg'] = f"Please input date within time period of interest ({case.onset_date - timedelta(days=14)} to {case.date_confirmed})"
         return JsonResponse(response_data)
 
     else:
