@@ -15,7 +15,7 @@ Login using the guest account:
 
 - Password: ssefinder
 
-<div style="width:900px;margin:0 auto"><img src="./docs/demo.gif" width="600"></div>
+![demo](./docs/demo.gif)
 
 
 ## Technologies
@@ -27,13 +27,14 @@ Project is created with:
 
 ## Features
 Login & Logout
-<div style="width:900px;margin:0 auto"><img src="./docs/login.gif" width="600"></div>
+![login](./docs/login.gif)
 
 Add new cases and attendance record, fetch address and coordinate from geodata.gov.hk API
-<div style="width:900px;margin:0 auto"><img src="./docs/addCase.gif" width="600"></div>
+![addCase](./docs/addCase.gif)
 
 Filter events by date
-<div style="width:900px;margin:0 auto"><img src="./docs/filter.gif" width="600"></div>
+![filter](./docs/filter.gif)
+
 
 ## Limitations
  
